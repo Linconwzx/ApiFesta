@@ -1,16 +1,18 @@
-import { View, FlatList, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import { useState, useEffect } from 'react';
+import { View, FlatList, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Cliente from '../components/Cliente';
+
 import api from '../components/Api';
 
 export default function ListarClientes() {
 
     const [dados, setDados] = useState<any[]>([]);
 
-    async function buscaClientes() {
+    async function buscaClientes(){
         const resposta = await api.get('clientes');
         setDados(resposta.data);
+      
     }
 
     useEffect(
@@ -18,37 +20,54 @@ export default function ListarClientes() {
             buscaClientes();
         }
     );
+ return (
+    <>
+        <View style={styles.bloco}>
+            <TouchableOpacity style={styles.btn}>
+                <Text style={styles.txtBtn}>Cadastrar Novo Cliente</Text>
+            </TouchableOpacity>
+        </View>
 
-    return(
-       
-            <View>
-                <View style={styles.bloco}>
-                <TouchableOpacity style={styles.btn}>
-                    <Text style={styles.txtBtn}>Cadastrar Novo Cliente</Text>
-                </TouchableOpacity>
-                </View>
-                  
-                <View>
-                    <Text>Lista de Clientes</Text>
+        <View style={styles.bloco}>
+            <Text style={styles.titulo}> Lista de Clientes </Text>
 
-                    <Cliente nome="Lincon" cpf="593.800.100-00" saldo="100" id="11"/>
-                </View>
-            </View>
+            <FlatList 
+                data={dados}
+                keyExtractor={(item)=>item.id}
+                renderItem={({item})=><Cliente nome={item.nome} cpf={item.cpf} saldo={item.saldo} id={item.id}/>}
+                style={styles.lista}
+            />
 
-    );
+        </View>       
+    </>   
+  );
 }
 
 const styles = StyleSheet.create({
-    bloco: {
-
-    },
-
-    btn: {
-
-    },
-
-    txtBtn
-    : {
-
-    },
+  titulo:{
+    fontSize:20,
+    fontWeight:'bold',
+    textAlign:'center',
+    marginTop:20
+  },
+  btn:{
+    backgroundColor:'#7e43a7ff',
+    marginLeft:'10%',
+    marginRight:'10%',
+    marginTop:20,
+    padding:20,
+    borderRadius:20
+  },
+  txtBtn:{
+    textAlign:'center',
+    fontSize:20,
+    color: '#f9f9f9'
+  },
+  bloco:{
+    width:'100%'
+  },
+  lista:{
+    width:'80%',
+    height:'70%'
+  }
 });
